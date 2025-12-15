@@ -1,3 +1,4 @@
 import duckdb
+import help
 
-print("hello etl")
+help.help()
