@@ -17,3 +17,38 @@ city : ville
 edition : édition (ex: “1930”, “2014”, “2022”, etc.)
 ```
 Nous remarquons que certaines entités se démarquent (équipes, lieux, dates ...) se qui se prête bien a un modèle entité-relation.
+
+## Utilisation de l'etl (docker)
+L'application se lance avec docker. Deux volumes sont créés
+- un premier pour les fichiers csv et json a utiliser comme source de données
+- un second pour les stocker les donnes de la base de données
+Pour interagir avec l'application : 
+0. s'assurer que docker est installé : [télécharger docker](https://docs.docker.com/desktop/)
+1. cloner ce repository
+2. dans le terminal entrer la commande suivante pour demarrer le service en mode détaché
+```sh
+docker compose up --build -d
+```
+3. puis pour ouvrir un terminal interactif utilser la commande suivante : 
+```sh
+docker exec -it etl_container bash 
+```
+4. vous pouvez alors utilser les scripts en appelant directement le fichier concerné (exemple ici, le fichier help.py qui sert à lister les options possibles)
+### comandes bonus
+```sh
+python help.py
+```
+5. sortir du terminal interractif
+```sh
+exit
+```
+6. redémarrer l'etl
+``` 
+docker compose restart
+```
+7. stopper l'etl 
+```sh
+docker compose down
+# ou pour arreter le service, et effacer les images
+docker compose down -v
+```
