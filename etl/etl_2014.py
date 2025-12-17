@@ -133,3 +133,10 @@ df.loc[draw & (df["Score home"] > df["Score away"]),
 df.loc[draw & (df["Score away"] > df["Score home"]),
        ["Home result", "Away result"]] = ["loser", "winner"]
 df = df.drop(columns=["Win conditions", "Score home", "Score away"])
+
+df["Stage"] = df["Stage"].apply(normalize_stage)
+
+df["City"] = df["City"].apply(city_to_english)
+
+df["Home Team Name"] = df["Home Team Name"].apply(normalize_country)
+df["Away Team Name"] = df["Away Team Name"].apply(normalize_country)
