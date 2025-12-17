@@ -14,3 +14,22 @@ logger = logging.getLogger("ETL")
 
 cities =  gc.get_cities()
 countries = gc.get_countries()
+
+STAGE_MAP = {
+    "group a": "group",
+    "group b": "group",
+    "group c": "group",
+    "group d": "group",
+    "group e": "group",
+    "group f": "group",
+    "group g": "group",
+    "group h": "group",
+    "round16": "round of 16",
+    "round of 16": "round of 16",
+    "quarter-finals": "quarter-final",
+    "quarter-final": "quarter-final",
+    "semi-finals": "semi-final",
+    "semi-final": "semi-final",
+    "final": "final",
+    "play-off for third place": "play-off for third place",
+}
