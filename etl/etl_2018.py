@@ -72,7 +72,7 @@ def get_cleaned_2018_data(json_file_path):
     # 2. TRANSFORMATION & NETTOYAGE
     
     # Date : ISO 8601
-    df['Date'] = pd.to_datetime(df['raw_date'], utc=True).dt.strftime('%Y-%m-%d %H:%M:%S')
+    df['Datetime'] = pd.to_datetime(df['raw_date'], utc=True).dt.strftime('%Y-%m-%d %H:%M:%S')
 
     # Texte : Villes et Équipes (Clean text)
     df['City'] = df['raw_city'].apply(clean_text_field)
@@ -100,7 +100,7 @@ def get_cleaned_2018_data(json_file_path):
 
     # 3. SÉLECTION FINALE
     final_cols = [
-        'Date', 
+        'Datetime', 
         'Stage', 
         'City', 
         'Home Team Name', 
