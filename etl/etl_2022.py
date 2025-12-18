@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 import os
 
-def clean_and_merge_2022() -> pd.DataFrame:
+def get_cleaned_2022_data() -> pd.DataFrame:
     """
     ETL pipeline for World Cup 2022 data.
     Reads from ./data, cleans teams/dates, merges match info with venues,
@@ -108,7 +108,7 @@ def clean_and_merge_2022() -> pd.DataFrame:
     merged['Away Team Goals'] = pd.to_numeric(merged['number of goals team2'], errors='coerce').fillna(0).astype(int)
 
     final_df = pd.DataFrame({
-        'Datetime': merged['date_clean_f1'], 
+        'Datetime': merged['date_clean_f2'], 
         'Stage': merged['round_clean'], 
         'City': merged['venue'].map(stadium_mapping).fillna('Unknown'),
         'Home Team Name': merged['team1'],
