@@ -20,13 +20,6 @@ logging.basicConfig(
 )
 
 # =========================
-# 0️⃣ UTILISER LE DATAFRAME NETTOYÉ DU PREMIER SCRIPT
-# Ici df_clean est le DataFrame final du premier script
-# =========================
-df_etl = load_and_clean_data()
-  # df_clean vient du premier script ETL
-
-# =========================
 # UTILS
 # =========================
 def normalize_text(val, field_name="value"):
@@ -53,6 +46,7 @@ def normalize_round(val):
         "semifinal": "semi-final",
         "semifinals": "semi-final",
         "thirdplacematch": "play-off for third place",
+        "playofforthirdplace": "play-off for third place",
         "finalround": "final-round",
         "final": "final"
     }
@@ -87,34 +81,35 @@ def compute_away_result(row):
     return "draw"
 
 def get_cleaned_1930_data():
+    """
+    Fonction principale qui retourne les données 1930-2010 nettoyées
+    """
     # =========================
-    # 1️⃣ DATETIME
+    # 0️⃣ CHARGER LE DATAFRAME DEPUIS L'AUTRE ETL
     # =========================
-    df_etl["Match Date"] = pd.to_datetime(df_etl["Match Date"], errors="coerce")
-    df_etl["Match Time"] = pd.to_datetime(df_etl["Match Time"], errors="coerce").dt.time
-    df_etl["Datetime"] = pd.to_datetime(
-        df_etl["Match Date"].astype(str) + " " + df_etl["Match Time"].astype(str),
-        errors="coerce"
-    )
-
+    df_etl = load_and_clean_data()
+    
+    # ⚠️ NE PAS RECRÉER DATETIME - Elle existe déjà et est correcte !
+    # La colonne Datetime est déjà créée dans etl_1930_2010.py
+    
     # =========================
-    # 2️⃣ NORMALISATION ROUND / STAGE
+    # 1️⃣ NORMALISATION ROUND / STAGE
     # =========================
     df_etl["round"] = df_etl["round"].apply(normalize_round)
 
     # =========================
-    # 3️⃣ NORMALISATION CITY
+    # 2️⃣ NORMALISATION CITY
     # =========================
     df_etl["venue"] = df_etl["venue"].apply(normalize_city)
 
     # =========================
-    # 4️⃣ NORMALISATION TEAM NAMES
+    # 3️⃣ NORMALISATION TEAM NAMES
     # =========================
     df_etl["team1"] = df_etl["team1"].apply(lambda x: normalize_text(x, "home team"))
     df_etl["team2"] = df_etl["team2"].apply(lambda x: normalize_text(x, "away team"))
 
     # =========================
-    # 5️⃣ GOALS (robuste)
+    # 4️⃣ GOALS (robuste)
     # =========================
     if "Home Team Goals" not in df_etl.columns or "Away Team Goals" not in df_etl.columns:
         if "score" not in df_etl.columns:
@@ -124,13 +119,13 @@ def get_cleaned_1930_data():
         df_etl["Away Team Goals"] = goals[1].astype("Int64")
 
     # =========================
-    # 6️⃣ CALCUL DES RESULTATS
+    # 5️⃣ CALCUL DES RESULTATS
     # =========================
     df_etl["Home Result"] = df_etl.apply(compute_home_result, axis=1)
     df_etl["Away Result"] = df_etl.apply(compute_away_result, axis=1)
 
     # =========================
-    # 7️⃣ SELECTION COLONNES FINALES
+    # 6️⃣ SELECTION COLONNES FINALES
     # =========================
     FINAL_COLUMNS = {
         "Datetime": "Datetime",
@@ -143,10 +138,20 @@ def get_cleaned_1930_data():
         "Home Result": "Home Result",
         "Away Result": "Away Result"
     }
-
+    
     df_final = df_etl[list(FINAL_COLUMNS.keys())].rename(columns=FINAL_COLUMNS)
+    
+    print("\n✅ Données 1930-2010 finales prêtes")
+    print(f"   - {len(df_final)} matches")
+    print(f"   - {df_final['Datetime'].notna().sum()} avec Datetime")
+    
     return df_final
 
-print(get_cleaned_1930_data())
-  
-   
+# =========================
+# TEST (si exécuté directement)
+# =========================
+if __name__ == "__main__":
+    df = get_cleaned_1930_data()
+    print("\n🔍 Aperçu final:")
+    print(df.info())
+    print("\n", df.head())
